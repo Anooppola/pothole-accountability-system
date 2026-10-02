@@ -82,6 +82,12 @@ def process_video(path, video_name, progress=_noop, send_telegram=True,
         # 7. Telegram
         if send_telegram:
             notify_video(video_id, progress)
+        else:
+            status, note = (("skipped", "Not sent (Telegram alerts were switched off)")
+                            if config.telegram_configured()
+                            else ("not_configured", "Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID to .env"))
+            for p in saved:
+                db.update_pothole(p["id"], telegram_status=status, telegram_error=note)
         progress(1.0, f"Done: {len(saved)} unique potholes found.")
         return video_id
     except Exception as e:

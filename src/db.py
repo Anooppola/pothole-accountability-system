@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS potholes (
     priority         TEXT,
     image_path       TEXT,
     crop_path        TEXT,
-    telegram_status  TEXT DEFAULT 'pending',     -- pending | sent | failed | not_configured
+    telegram_status  TEXT DEFAULT 'pending',     -- pending | sent | failed | skipped | not_configured
     telegram_error   TEXT,
     review_status    TEXT DEFAULT 'Pending',     -- Pending | Approved | Rejected
     review_note      TEXT,

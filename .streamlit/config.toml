@@ -1,0 +1,8 @@
+[server]
+maxUploadSize = 1024   # MB, allows long road videos
+
+[theme]
+primaryColor = "#d9480f"
+
+[browser]
+gatherUsageStats = false

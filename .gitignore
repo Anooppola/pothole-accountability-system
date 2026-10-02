@@ -26,3 +26,6 @@ runs/
 # OS / editor
 .DS_Store
 .vscode/
+
+# Local tool settings
+.claude/

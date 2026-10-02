@@ -69,7 +69,10 @@ def main():
     if not files:
         raise SystemExit(f"No images found in {args.images}")
     out_w, out_h = 1280, 720
-    writer = cv2.VideoWriter(args.output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, (out_w, out_h))
+    # H.264 ("avc1") plays in web browsers; fall back to MPEG-4 if it is unavailable.
+    writer = cv2.VideoWriter(args.output, cv2.VideoWriter_fourcc(*"avc1"), args.fps, (out_w, out_h))
+    if not writer.isOpened():
+        writer = cv2.VideoWriter(args.output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, (out_w, out_h))
     for i, f in enumerate(files):
         img = cv2.imread(f)
         if img is None:
