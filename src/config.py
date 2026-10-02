@@ -35,9 +35,11 @@ ROI_TOP = 0.30            # ignore detections whose centre is in the top 30% (sk
 
 # ---------- Tracking / deduplication ----------
 TRACK_IOU = 0.15          # box overlap needed to continue a track
+TRACK_HIST_SIM = 0.65     # minimum appearance similarity to continue a track
 TRACK_MAX_GAP_S = 1.5     # a track ends if the pothole is unseen for this long (seconds)
 MERGE_GAP_S = 2.0         # tracks this close in time ...
-MERGE_HIST_SIM = 0.80     # ... and this similar in appearance are merged into one pothole
+MERGE_HIST_SIM = 0.80     # ... and this similar in appearance ...
+MERGE_MAX_DIST = 0.30     # ... and this close in position (fraction of frame) are merged into one pothole
 MIN_HITS = 2              # a pothole must be seen in at least this many frames ...
 SINGLE_HIT_CONF = 0.50    # ... unless one detection is at least this confident
 

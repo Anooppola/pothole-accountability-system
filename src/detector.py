@@ -42,7 +42,7 @@ def detect(frame: np.ndarray, time_s: float, conf: float = None) -> list:
     model = load_model()
     h, w = frame.shape[:2]
     result = model.predict(
-        frame, conf=conf, imgsz=config.IMG_SIZE, device=config.DEVICE, verbose=False
+        frame, conf=conf, iou=0.5, imgsz=config.IMG_SIZE, device=config.DEVICE, verbose=False
     )[0]
     if result.masks is None or result.boxes is None or len(result.boxes) == 0:
         return []
@@ -73,4 +73,15 @@ def detect(frame: np.ndarray, time_s: float, conf: float = None) -> list:
                 centroid=(float(cx), float(cy)),
             )
         )
-    return detections
+    return remove_overlaps(detections)
+
+
+def remove_overlaps(detections: list, contain: float = 0.6) -> list:
+    """Drop a detection when most of its mask lies inside a more confident one
+    (the model sometimes outputs two masks for one pothole)."""
+    kept = []
+    for d in sorted(detections, key=lambda x: x.conf, reverse=True):
+        d_area = d.mask.sum()
+        if all((d.mask & k.mask).sum() / max(1, min(d_area, k.mask.sum())) < contain for k in kept):
+            kept.append(d)
+    return kept
