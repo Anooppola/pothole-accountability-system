@@ -28,8 +28,8 @@ IMG_SIZE = 640
 
 # ---------- Video processing ----------
 SAMPLE_FPS = 2.0          # frames analysed per second of video
-BLUR_THRESHOLD = 60.0     # variance of Laplacian; frames below this are skipped as blurry
-CONF_THRESHOLD = 0.35     # minimum detection confidence
+BLUR_THRESHOLD = 25.0     # variance of Laplacian (on a 640-px-wide copy); frames below this are skipped as blurry
+CONF_THRESHOLD = 0.25     # minimum detection confidence
 MIN_MASK_AREA = 0.0015    # ignore masks smaller than 0.15% of the frame (noise)
 ROI_TOP = 0.30            # ignore detections whose centre is in the top 30% (sky, buildings)
 
@@ -39,7 +39,7 @@ TRACK_MAX_GAP_S = 1.5     # a track ends if the pothole is unseen for this long 
 MERGE_GAP_S = 2.0         # tracks this close in time ...
 MERGE_HIST_SIM = 0.80     # ... and this similar in appearance are merged into one pothole
 MIN_HITS = 2              # a pothole must be seen in at least this many frames ...
-SINGLE_HIT_CONF = 0.60    # ... unless one detection is at least this confident
+SINGLE_HIT_CONF = 0.50    # ... unless one detection is at least this confident
 
 # ---------- Severity (Estimated Visual Severity Proxy) ----------
 SEVERITY_WEIGHTS = {"area": 0.45, "dark": 0.20, "irregular": 0.15, "persist": 0.20}
