@@ -66,15 +66,13 @@ The pretrained model downloads automatically the first time (about 24 MB).
 ## Telegram setup
 
 1. In Telegram, open **@BotFather**, send `/newbot`, follow the steps and copy the **bot token**.
-2. Send any message (e.g. "hi") to your new bot.
-3. Open `https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates` in a browser and copy the number
-   after `"chat":{"id":` — that is your **chat ID**.
-4. Put both in `.env`:
+2. Put the token in `.env`: `TELEGRAM_BOT_TOKEN=123456789:AA...` and save.
+3. Open your bot in Telegram, press **Start** and send it any message (e.g. "hi").
+4. Find and save your chat ID automatically (also sends a test message):
+   ```bash
+   python scripts/get_chat_id.py
    ```
-   TELEGRAM_BOT_TOKEN=123456789:AA...
-   TELEGRAM_CHAT_ID=987654321
-   ```
-5. Restart the app and click **Send test message** in the sidebar.
+5. Restart the app. The sidebar shows **Bot connected**.
 
 `.env` is in `.gitignore`, so your token never goes to GitHub.
 
