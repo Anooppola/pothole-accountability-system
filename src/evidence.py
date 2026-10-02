@@ -79,4 +79,8 @@ def save_evidence(video_id, frame, mask, box, pothole_id, severity, priority, ti
 
 
 def _rel(p: Path) -> str:
-    return str(p.relative_to(config.ROOT))
+    """Project-relative path when possible (portable), otherwise absolute."""
+    try:
+        return str(p.relative_to(config.ROOT))
+    except ValueError:
+        return str(p)
