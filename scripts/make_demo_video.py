@@ -1,7 +1,7 @@
 """Build a demo "dashcam-style" video from a folder of pothole photos.
 
 Each photo becomes a 3-second clip that slowly zooms in, like a car approaching
-the pothole. Useful for testing when you have no road video yet.
+the pothole, shown at varying distances and lane positions. Useful for testing when you have no road video yet.
 
 Usage:
     python scripts/make_demo_video.py <images_folder> <output.mp4> [--seconds 3]
@@ -12,6 +12,30 @@ import os
 
 import cv2
 import numpy as np
+
+
+# Each photo is shown at a different "distance" and lane position so the demo
+# contains far/small potholes (Minor) as well as near/large ones (Critical).
+VIEWS = [  # (scale of photo on screen, horizontal centre)
+    (1.00, 0.50),
+    (0.45, 0.30),
+    (0.70, 0.62),
+    (0.38, 0.70),
+    (0.85, 0.45),
+]
+
+
+def placed_clip(img, seconds, fps, out_w, out_h, scale, cx):
+    """Photo shrunk to `scale` and pasted on a blurred copy of itself, approaching."""
+    background = cv2.GaussianBlur(cv2.resize(img, (out_w, out_h)), (0, 0), 25)
+    for frame in approach_clip(img, seconds, fps, out_w, out_h):
+        t_w, t_h = int(out_w * scale), int(out_h * scale)
+        small = cv2.resize(frame, (t_w, t_h), interpolation=cv2.INTER_AREA)
+        canvas = background.copy()
+        x1 = int(np.clip(cx * out_w - t_w / 2, 0, out_w - t_w))
+        y1 = out_h - t_h  # road is at the bottom of the view
+        canvas[y1:y1 + t_h, x1:x1 + t_w] = small
+        yield canvas
 
 
 def approach_clip(img, seconds, fps, out_w, out_h):
@@ -46,11 +70,12 @@ def main():
         raise SystemExit(f"No images found in {args.images}")
     out_w, out_h = 1280, 720
     writer = cv2.VideoWriter(args.output, cv2.VideoWriter_fourcc(*"mp4v"), args.fps, (out_w, out_h))
-    for f in files:
+    for i, f in enumerate(files):
         img = cv2.imread(f)
         if img is None:
             continue
-        for frame in approach_clip(img, args.seconds, args.fps, out_w, out_h):
+        scale, cx = VIEWS[i % len(VIEWS)]
+        for frame in placed_clip(img, args.seconds, args.fps, out_w, out_h, scale, cx):
             writer.write(frame)
     writer.release()
     print(f"Wrote {args.output} from {len(files)} images ({len(files) * args.seconds:.0f} s)")

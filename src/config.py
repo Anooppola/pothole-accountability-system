@@ -44,12 +44,13 @@ MIN_HITS = 2              # a pothole must be seen in at least this many frames 
 SINGLE_HIT_CONF = 0.50    # ... unless one detection is at least this confident
 
 # ---------- Severity (Estimated Visual Severity Proxy) ----------
-SEVERITY_WEIGHTS = {"area": 0.45, "dark": 0.20, "irregular": 0.15, "persist": 0.20}
-AREA_REF = 0.08           # corrected area that counts as "very large" (score 1.0)
-PERSIST_REF = 6           # frames seen that counts as "very persistent" (score 1.0)
+SEVERITY_WEIGHTS = {"area": 0.55, "dark": 0.20, "irregular": 0.15, "persist": 0.10}
+AREA_MIN = 0.003          # corrected area (fraction of frame) that scores 0 ...
+AREA_MAX = 0.25           # ... and that scores 1 (log scale in between)
+PERSIST_REF = 10          # frames seen that counts as "very persistent" (score 1.0)
 SEVERITY_LEVELS = [       # (upper score bound, name)
-    (0.33, "Minor"),
-    (0.66, "Moderate"),
+    (0.40, "Minor"),
+    (0.65, "Moderate"),
     (1.01, "Critical"),
 ]
 PRIORITY_NAMES = {1: "P1 Urgent", 2: "P2 Soon", 3: "P3 Routine"}
