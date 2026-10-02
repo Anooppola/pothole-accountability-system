@@ -1,0 +1,28 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Data, models and outputs (too large / private for GitHub)
+data/uploads/*
+data/evidence/*
+!data/uploads/.gitkeep
+!data/evidence/.gitkeep
+models/*
+!models/.gitkeep
+*.pt
+*.mp4
+*.mov
+*.avi
+*.db
+*.sqlite3
+runs/
+
+# OS / editor
+.DS_Store
+.vscode/
