@@ -16,7 +16,10 @@ def process_video(path, video_name, progress=_noop, send_telegram=True,
     progress(fraction 0-1, message) is called as work advances (used by the web page).
     """
     db.init_db()
+    sample_fps = sample_fps or config.SAMPLE_FPS
+    conf = config.CONF_THRESHOLD if conf is None else conf
     video_id = db.create_video(video_name, str(path))
+    db.update_video(video_id, sample_fps=sample_fps, conf_threshold=conf)
     started = time.time()
     try:
         info = video.video_info(path)

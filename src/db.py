@@ -64,6 +64,11 @@ def connect():
 def init_db():
     with connect() as conn:
         conn.executescript(SCHEMA)
+        # Columns added after the first version: add them to older databases too.
+        have = {r["name"] for r in conn.execute("PRAGMA table_info(videos)")}
+        for col, typ in (("sample_fps", "REAL"), ("conf_threshold", "REAL")):
+            if col not in have:
+                conn.execute(f"ALTER TABLE videos ADD COLUMN {col} {typ}")
 
 
 def now() -> str:

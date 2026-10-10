@@ -20,8 +20,17 @@ with st.sidebar:
     st.subheader("Settings")
     sample_fps = st.slider("Frames analysed per second", 1.0, 5.0, float(config.SAMPLE_FPS), 0.5,
                            help="Higher finds more but is slower.")
-    conf = st.slider("Detection confidence", 0.10, 0.80, float(config.CONF_THRESHOLD), 0.05,
-                     help="Lower finds more potholes but also more false alarms.")
+    if "conf" not in st.session_state:
+        st.session_state["conf"] = float(config.CONF_THRESHOLD)
+    conf = st.slider("Detection confidence", 0.10, 0.80, step=0.05, key="conf",
+                     help="Minimum certainty for the model to count something as a pothole. "
+                          "Lower finds more potholes but also more false alarms. "
+                          f"Recommended: {config.CONF_THRESHOLD}.")
+    if conf > 0.5:
+        st.warning(f"Confidence {conf:.2f} is high: many real potholes will be missed "
+                   f"(the model is often only 30-75% sure).", icon=":material/warning:")
+    if conf != float(config.CONF_THRESHOLD):
+        st.button("Reset to recommended", on_click=lambda: st.session_state.update(conf=float(config.CONF_THRESHOLD)))
     send_tg = st.checkbox("Send alerts to Telegram", value=config.telegram_configured(),
                           disabled=not config.telegram_configured())
 
@@ -83,7 +92,13 @@ if vid:
         f"{v['raw_detections']} raw detections in {v['frames_analysed']} frames were merged into "
         f"{v['pothole_count']} unique potholes. {v['frames_blurry']} blurry frames skipped. "
         f"Processing time {v['processing_s']} s for a {v['duration_s']:.0f} s video."
+        + (f" Settings: {v['sample_fps']:g} frames/s, confidence {v['conf_threshold']:.2f}."
+           if v["conf_threshold"] is not None else "")
     )
+    if v["conf_threshold"] is not None and v["conf_threshold"] > 0.5:
+        st.warning(f"This video was processed with a high confidence setting ({v['conf_threshold']:.2f}), "
+                   f"so some potholes may have been missed. Set it back to {config.CONF_THRESHOLD} "
+                   "in the sidebar and run it again.", icon=":material/warning:")
 
     if not potholes:
         st.info("No potholes found. Try lowering the detection confidence in the sidebar.")
